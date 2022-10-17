@@ -1,1 +1,1 @@
-# FullStack2022-puhelinluettelo-frontend
+# FullStack2022 puhelinluettelo frontend
