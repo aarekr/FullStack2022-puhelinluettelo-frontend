@@ -42,6 +42,32 @@ const App = () => {
     setNewName('')
     setNewNumber('')
   }
+
+  const paivita_nimilista = () => {  // päivitetään nimilista deletoinnin jälkeen
+    personService
+      .getAll()
+      .then(initialPeople => {
+        console.log('promise fulfilled')
+        setPersons(initialPeople)
+      })
+  }
+  const deletePerson = (event) => {
+    event.preventDefault()
+    let id = event.target.value
+    const henkilo = persons.find(person => person.id === Number(id))
+    const poistetaanko = window.confirm(`Delete ${henkilo.name}`)
+    if (poistetaanko === true) {
+      const url = `http://localhost:3001/persons/${id}`
+      personService
+        .poista_nimi(url)
+        .then(poistettuPerson => {
+          setNewName('')
+          setNewNumber('')
+          paivita_nimilista()
+        })
+    }
+    paivita_nimilista()
+  }
   
   const handleNameChange = (event) => {
     console.log(event.target.value)
@@ -67,7 +93,7 @@ const App = () => {
       <h2>All numbers</h2>
       <ul>
         {persons.map(person => 
-          <Person key={person.name} person={person} />
+          <Person key={person.name} person={person} deletePerson={deletePerson} />
         )}
       </ul>
     </div>

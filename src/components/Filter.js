@@ -1,4 +1,4 @@
-import Person from "./Person"
+import FilteredPerson from "./FilteredPerson"
 
 const Filter = ({ persons, hakusana, handleHakusanaChange }) => {
   return(
@@ -7,7 +7,7 @@ const Filter = ({ persons, hakusana, handleHakusanaChange }) => {
       <ul>
         {persons
           .filter(person => person.name.toLowerCase().includes(hakusana.toLowerCase()))
-          .map(person => <Person key={person.name} person={person} />
+          .map(person => <FilteredPerson key={person.name} person={person} />
         )}
       </ul>
     </div>
