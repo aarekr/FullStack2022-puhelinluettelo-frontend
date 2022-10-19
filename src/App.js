@@ -3,12 +3,14 @@ import Person from './components/Person'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personService from './services/persons'
+import SuccessNotification from './components/SuccessNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [hakusana, setHakusana] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -33,8 +35,8 @@ const App = () => {
         .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
+          setSuccessMessage(`Added ${newName} to the contact list`)
+          setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
     } else {
       let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
@@ -45,6 +47,8 @@ const App = () => {
           .update(henkilo.id, changedPerson)
           .then(response => {
             paivita_nimilista()
+            setSuccessMessage(`Updated ${newName}'s phone number`)
+            setTimeout(() => { setSuccessMessage(null) }, 5000)
           })
       }
     }
@@ -52,7 +56,7 @@ const App = () => {
     setNewNumber('')
   }
 
-  const paivita_nimilista = () => {  // apufunktio: päivitetään nimilista
+  const paivita_nimilista = () => {  // apufunktio: päivitetään nimilista muutoksen jälkeen
     personService
       .getAll()
       .then(updatedPeople => {
@@ -73,6 +77,8 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           paivita_nimilista()
+          setSuccessMessage(`Deleted ${henkilo.name} from the contact list`)
+          setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
     }
     paivita_nimilista()
@@ -100,6 +106,7 @@ const App = () => {
       <PersonForm newName={newName} newNumber={newNumber} addPerson={addPerson}
         handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
       <h2>All numbers</h2>
+      <SuccessNotification message={successMessage} />
       <ul>
         {persons.map(person => 
           <Person key={person.name} person={person} deletePerson={deletePerson} />
