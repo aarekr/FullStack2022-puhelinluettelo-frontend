@@ -43,25 +43,12 @@ const App = () => {
     } else {
       let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       if (korvaa_numero === true) {
-        personService
-          .getUnique()
-          .then(response => {
-            console.log("henkilö on edelleen listalla")
-          })
-          .catch(error => {
-            setErrorMessage(`Information of ${newName} has already been removed from server`)
-            setTimeout(() => { setErrorMessage(null) }, 5000)
-            paivita_nimilista()
-            return null
-          })
         const henkilo = persons.find(person => person.name === newName)
         const changedPerson = {...henkilo, number: newNumber}
         personService
           .update(henkilo.id, changedPerson)
           .then(response => {
             paivita_nimilista()
-            setSuccessMessage(`Updated ${newName}'s phone number`)
-            setTimeout(() => { setSuccessMessage(null) }, 5000)
           })
       }
     }
@@ -83,9 +70,8 @@ const App = () => {
     const henkilo = persons.find(person => person.id === Number(id))
     const poistetaanko = window.confirm(`Delete ${henkilo.name}`)
     if (poistetaanko === true) {
-      const url = `http://localhost:3001/persons/${id}`
       personService
-        .poista_nimi(url)
+        .poista_nimi(id)
         .then(poistettuPerson => {
           setNewName('')
           setNewNumber('')
