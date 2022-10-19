@@ -4,6 +4,7 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personService from './services/persons'
 import SuccessNotification from './components/SuccessNotification'
+import ErrorNotification from './components/ErrorNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [hakusana, setHakusana] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -41,6 +43,17 @@ const App = () => {
     } else {
       let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       if (korvaa_numero === true) {
+        personService
+          .getUnique()
+          .then(response => {
+            console.log("henkilö on edelleen listalla")
+          })
+          .catch(error => {
+            setErrorMessage(`Information of ${newName} has already been removed from server`)
+            setTimeout(() => { setErrorMessage(null) }, 5000)
+            paivita_nimilista()
+            return null
+          })
         const henkilo = persons.find(person => person.name === newName)
         const changedPerson = {...henkilo, number: newNumber}
         personService
@@ -107,6 +120,7 @@ const App = () => {
         handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
       <h2>All numbers</h2>
       <SuccessNotification message={successMessage} />
+      <ErrorNotification message={errorMessage} />
       <ul>
         {persons.map(person => 
           <Person key={person.name} person={person} deletePerson={deletePerson} />
