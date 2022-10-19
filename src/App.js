@@ -37,20 +37,29 @@ const App = () => {
           setNewNumber('')
         })
     } else {
-      alert(`${newName} is already added to phonebook`)
+      let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      if (korvaa_numero === true) {
+        const henkilo = persons.find(person => person.name === newName)
+        const changedPerson = {...henkilo, number: newNumber}
+        personService
+          .update(henkilo.id, changedPerson)
+          .then(response => {
+            paivita_nimilista()
+          })
+      }
     }
     setNewName('')
     setNewNumber('')
   }
 
-  const paivita_nimilista = () => {  // päivitetään nimilista deletoinnin jälkeen
+  const paivita_nimilista = () => {  // apufunktio: päivitetään nimilista
     personService
       .getAll()
-      .then(initialPeople => {
-        console.log('promise fulfilled')
-        setPersons(initialPeople)
+      .then(updatedPeople => {
+        setPersons(updatedPeople)
       })
   }
+
   const deletePerson = (event) => {
     event.preventDefault()
     let id = event.target.value
