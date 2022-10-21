@@ -40,6 +40,13 @@ const App = () => {
           setSuccessMessage(`Added ${newName} to the contact list`)
           setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
+        .catch(error => {
+          setErrorMessage(`Error: ${error.response.data}`)
+          setTimeout(() => { setErrorMessage(null) }, 5000)
+          console.log("error data   :", error.response.data)
+          console.log("error message:", error.message)
+          console.log("error        :", error)
+        })
     } else {
       let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       if (korvaa_numero === true) {
