@@ -27,7 +27,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const found = persons.find(person => person.name === newName)
-    console.log('found:', found)
+    console.log('Frontend addPerson found:', found)
     if (found === undefined) {
       const nameObject = {
         name: newName,
@@ -41,11 +41,9 @@ const App = () => {
           setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
         .catch(error => {
-          setErrorMessage(`Error: ${error.response.data}`)
+          setErrorMessage(`Error: name too short or number missing`)
           setTimeout(() => { setErrorMessage(null) }, 5000)
-          console.log("error data   :", error.response.data)
-          console.log("error message:", error.message)
-          console.log("error        :", error)
+          paivita_nimilista()
         })
     } else {
       let korvaa_numero = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
@@ -54,11 +52,12 @@ const App = () => {
         const changedPerson = {...henkilo, number: newNumber}
         personService
           .update(henkilo.id, changedPerson)
-          .then(response => {
+          .then(changedPerson => {
             paivita_nimilista()
           })
       }
     }
+    paivita_nimilista()
     setNewName('')
     setNewNumber('')
   }
@@ -74,7 +73,8 @@ const App = () => {
   const deletePerson = (event) => {
     event.preventDefault()
     let id = event.target.value
-    const henkilo = persons.find(person => person.id === Number(id))
+    const henkilo = persons.find(person => person.id === id)
+    console.log("löydetty henkilö:", henkilo)
     const poistetaanko = window.confirm(`Delete ${henkilo.name}`)
     if (poistetaanko === true) {
       personService
@@ -91,15 +91,12 @@ const App = () => {
   }
   
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   const handleHakusanaChange = (event) => {
-    console.log(event.target.value)
     setHakusana(event.target.value)
   }
 
